@@ -1,5 +1,5 @@
 #!/bin/bash
-# commande clt qui 
+# commande clt qui vide le répertoire trash de tout son contenu
 
 # Vérifie qu'il y a exactement un argument
 if [ $# -ne 0 ]; then
