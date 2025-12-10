@@ -40,3 +40,4 @@ for ((i = 1; i <= $nbLines+1; i++)); do
         fi
     fi
 done
+rm /var/log/install.log
