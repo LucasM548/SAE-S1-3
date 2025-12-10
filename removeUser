@@ -36,7 +36,7 @@ for ((i = 1; i <= $nbLines+1; i++)); do
         full_path="$rephome/$user"
 
         if [ -d "$full_path" ] && [ "$full_path" != "/" ] && [ "$full_path" != "/home" ]; then
-            rm -rd "$rephome/$user"
+            rm -rd "$full_path"
         fi
     fi
 done
