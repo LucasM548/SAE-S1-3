@@ -20,7 +20,7 @@ fi
 # Vérifie que l'utilisateur à bien lancer le script en mode administrateur (avec un sudo avant)
 # Lorsque qu'on fait un sudo id -u, ça renvoie 0 car on à l'UID 0
 if [ $(id -u) -ne 0 ]; then
-    echo -e "\033[31m====== Le script doit être executé en mode administrateur (sudo) ======\033[0m"
+    echo -e "\033[31m====== Erreur : Le script doit être executé en mode administrateur (sudo) ======\033[0m"
     exit 3
 fi
 
@@ -44,7 +44,7 @@ for ((i = 1; i <= $nbLines+1; i++)); do
         if [ $? = 0 ]; then
             # \033[32m avec le -e permet de mettre le texte en vert
             # et \033[0m permet de remettre la couleur blanche (sinon toutes les prochaines lignes serons en vert)
-            echo -e "\033[32m====== L'utilisateur $user à bien était créé dans le groupe $group ======\033[0m"
+            echo -e "\033[32m====== Erreur : L'utilisateur $user à bien était créé dans le groupe $group ======\033[0m"
             # mkdir -p pour créer les fichiers Downloads et Documents si ils ne sont pas encore créer
             mkdir -p "$rephome/$user/Downloads" "$rephome/$user/Documents"
             if [ ! -f "$rephome/$user/.bashrc" ]; then
@@ -55,9 +55,9 @@ for ((i = 1; i <= $nbLines+1; i++)); do
             # Rendre les dossiers à l'utilisateur (sinon ils sont à root)
             chown -R "$user:$group" "$rephome/$user"
         else
-            echo -e "\033[31m====== L'utilisateur $user n'as pas pu être ajouter (il existe peut-être déjà) ======\033[0m"
+            echo -e "\033[31m====== Erreur : L'utilisateur $user n'as pas pu être ajouter (il existe peut-être déjà) ======\033[0m"
         fi
     else
-        echo -e "\033[31m====== La ligne $i est défaillante ======\033[0m"
+        echo -e "\033[31m====== Erreur : La ligne $i est défaillante ======\033[0m"
     fi
 done
