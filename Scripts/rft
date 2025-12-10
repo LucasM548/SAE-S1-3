@@ -6,7 +6,7 @@ if [ $# -ne 1 ] && [ $# -ne 2 ] ; then
     exit 1
 fi
 
-if [ $# -e 2 ] ; then
+if [ $# = 2 ] ; then
     rep=$2
     exit 1
 else rep=$HOME
