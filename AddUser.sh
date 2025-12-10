@@ -45,7 +45,7 @@ for ((i = 1; i <= $nbLines+1; i++)); do
         if [ $? = 0 ]; then
             # \033[32m avec le -e permet de mettre le texte en vert
             # et \033[0m permet de remettre la couleur blanche (sinon toutes les prochaines lignes serons en vert)
-            echo -e "\033[32m====== Erreur : L'utilisateur $user à bien était créé dans le groupe $group ======\033[0m"
+            echo -e "\033[32m====== L'utilisateur $user à bien était créé dans le groupe $group ======\033[0m"
             # mkdir -p pour créer les fichiers Downloads et Documents si ils ne sont pas encore créer
             mkdir -p "$rephome/$user/Downloads" "$rephome/$user/Documents"
             if [ ! -f "$rephome/$user/.bashrc" ]; then
