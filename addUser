@@ -62,12 +62,18 @@ for ((i = 1; i <= $nbLines+1; i++)); do
 
             echo -e "alias e='emacs'\nalias w='wireshark'" >> $rephome/$user/.bashrc
             echo "Les alias e pour 'emacs' et w pour 'wireshark' ont été ajoutés pour l'utilisateur $user" >> $log
+
             # Ajouter le path /Scripts à la suite des paths déjà présents dans le fichier .bashrc
             echo -e 'export PATH="$PATH:/SAE/Scripts"' >> $rephome/$user/.bashrc
             echo "Le path '/SAE/Scripts' a bien été ajouté au .bashrc de l'utilisateur $user" >> $log
+
             # Rendre les dossiers à l'utilisateur (sinon ils sont à root)
             chown -R "$user:$group" "$rephome/$user"
             echo "Les droits du dossier $rephome/$user ont bien été donnés à $user du groupe $group" >> $log
+
+            # AJouter l'utilisateur dans le groupe wireshark pour qu'il puisse l'utiliser
+            adduser $user wireshark >> $log 2>&1
+            echo "L'utilisateur $user a été ajouté au groupe wireshark" >> $log
         else
             echo -e "\033[31m====== Erreur : L'utilisateur $user n'a pas pu être ajouté (il existe peut-être déjà) ======\033[0m"
             echo "====== Erreur : L'utilisateur $user n'a pas pu être ajouté (il existe peut-être déjà) ======" >> $log
