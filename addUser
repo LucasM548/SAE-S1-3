@@ -34,7 +34,7 @@ log="/var/log/install.log"
 
 # Analyse de chaque ligne du fichier
 for ((i = 1; i <= $nbLines+1; i++)); do
-    # Stocke la ligne numéro i dans une variable
+    # Stocke la ligne numéro i dans une variable (le tr -d " " permet de supprimer les espaces)
     Lines=$(sed -n "${i}p" "$1" | tr -d " ")
     # Le <<< permet d'envoyer une chaîne de caractères sans utiliser un echo avec un pipe
     user=$(cut -d ',' -f1 <<< "$Lines")

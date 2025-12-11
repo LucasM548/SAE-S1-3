@@ -468,8 +468,7 @@
 	<p><em>Justification :</em> Cette configuration permet à <code>testuser</code> d'effectuer des captures sans avoir
 		besoin des droits <code>root</code> (sudo). La commande <code>usermod -aG</code> ajoute le groupe
 		<code>wireshark</code> à <code>testuser</code> sans supprimer les groupes de <code>testuser</code> existants.
-		(-a : append, -G : group)
-	</p>
+		(-a : append, -G : group)</p>
 	<p><em>Note :</em> Sous Debian, vous pouvez simplement utiliser sudo <code>adduser testuser wireshark</code>.
 		Toutefois, la commande <code>usermod</code> est présentée ici car elle fonctionne sur toutes les distributions
 		Linux.</p>
@@ -505,16 +504,14 @@
 	<p>Ajouter le chemin <code>/SAE/Scripts</code> au <code>PATH</code> de l'utilisateur <code>testuser</code> en
 		modifiant son fichier <code>.bashrc</code> pour qu'il ait accsès aux scripts poubelle depuis n'importe quel
 		répertoire :</p>
-	<pre class="hljs"><code><div><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">echo</span> <span class="hljs-string">&#x27;export PATH=$PATH:/SAE/Scripts&#x27;</span> | <span class="hljs-built_in">sudo</span> <span class="hljs-built_in">tee</span> -a <span class="hljs-string">&quot;/home/testuser/.bashrc&quot;</span>
+	<pre class="hljs"><code><div><span class="hljs-built_in">echo</span> <span class="hljs-string">&#x27;export PATH=$PATH:/SAE/Scripts&#x27;</span> | <span class="hljs-built_in">sudo</span> <span class="hljs-built_in">tee</span> -a <span class="hljs-string">&quot;/home/testuser/.bashrc&quot;</span>
 </div></code></pre>
 	<p><em>Justification :</em> L'utilisation de <code>sudo tee -a</code> permet d'ajouter la ligne au fichier
 		<code>.bashrc</code> avec les droits administrateur, évitant ainsi les problèmes de permissions, le
-		<code>-a</code> signifie <code>append</code> et permet d'ajouter le contenu au fichier sans le remplacer.
-	</p>
+		<code>-a</code> signifie <code>append</code> et permet d'ajouter le contenu au fichier sans le remplacer.</p>
 	<p><em>Note :</em> Vous pouvezsimplement utiliser la commande
 		<code>echo 'export PATH=$PATH:/SAE/Scripts' &gt;&gt; /home/testuser/.bashrc</code>, mais uniquement si
-		l'utilisateur est <code>root</code>, avec la commande <code>sudo -u</code>.
-	</p>
+		l'utilisateur est <code>root</code>, avec la commande <code>sudo -u</code>.</p>
 	<hr>
 	<h2 id="4-configuration-des-services-systemd">4. Configuration des Services Systemd</h2>
 	<p>Vous devez configurer plusieurs services pour qu'ils se lancent automatiquement au démarrage.</p>
@@ -537,12 +534,12 @@
 	<h2 id="5-rotation-des-logs-logrotate">5. Rotation des Logs (Logrotate)</h2>
 	<p>Un service est mis en place pour surveiller les modifications du fichier <code>/var/log/install.log</code> et
 		enregistrer la date de modification dans <code>/var/log/date_install.log</code>.</p>
-	<p>Création du fichier de log <code>date_install.log</code> :</p>
+	<p>Création du fichier de log <code>date_install.log</code> et <code>install.log</code> :</p>
 	<pre class="hljs"><code><div><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">touch</span> /var/log/date_install.log
+<span class="hljs-built_in">sudo</span> <span class="hljs-built_in">touch</span> /var/log/install.log
 </div></code></pre>
 	<p>Déplacement des fichiers de définition systemd (<code>.path</code> et <code>.service</code>) vers
-		<code>/etc/systemd/system/</code> :
-	</p>
+		<code>/etc/systemd/system/</code> :</p>
 	<pre class="hljs"><code><div><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">mv</span> /SAE/install-log.path /etc/systemd/system/
 <span class="hljs-built_in">sudo</span> <span class="hljs-built_in">mv</span> /SAE/install-log.service /etc/systemd/system/
 </div></code></pre>
@@ -580,10 +577,10 @@ Description=Ajoute la date dans date_install.log
 [Service]
 # Indique que ce service exécute la commande et s&#x27;arrête juste après
 Type=oneshot
-# Lorsque que le service est appelé, ajoute la date actuelle dans le fichier date_install.log (on utilise pas uniquement bash car systemd n&#x27;as pas le path)
+# Lorsque que le service est appelé, ajoute la date actuelle dans le fichier date_install.log (on utilise pas uniquement bash car systemd n&#x27;a pas le path)
 ExecStart=/bin/bash -c &#x27;date &gt;&gt; /var/log/date_install.log&#x27;
 </div></code></pre>
-	<p>Pour éviter que les fichiers de logs ne saturent l'espace disque, Il faut configuré <code>logrotate</code>.</p>
+	<p>Pour éviter que les fichiers de logs ne saturent l'espace disque, Il faut configurer <code>logrotate</code>.</p>
 	<h3 id="configuration-pour-installlog">Configuration pour <code>install.log</code></h3>
 	<p>Il faut créer un fichier de configuration dans <code>/etc/logrotate.d/</code> avec les paramètres suivants :</p>
 	<ul>
@@ -630,11 +627,9 @@ ExecStart=/bin/bash -c &#x27;date &gt;&gt; /var/log/date_install.log&#x27;
 	<ol>
 		<li>Création de l'utilisateur avec <code>useradd</code>.</li>
 		<li>Configuration du répertoire personnel (home) avec les sous-dossiers <code>Documents</code> et
-			<code>Downloads</code>.
-		</li>
+			<code>Downloads</code>.</li>
 		<li>Configuration du fichier <code>.bashrc</code> pour inclure le chemin des scripts (<code>/SAE</code>) dans le
-			<code>PATH</code>.
-		</li>
+			<code>PATH</code>.</li>
 		<li>Création des alias <code>e</code> pour <code>emacs</code> et <code>w</code> pour <code>wireshark</code>.
 		</li>
 		<li>Enregistrement des opérations dans <code>/var/log/install.log</code>.</li>
@@ -678,7 +673,7 @@ nbLines=$(<span class="hljs-built_in">wc</span> -l &lt; <span class="hljs-string
 
 <span class="hljs-comment"># Analyse de chaque ligne du fichier</span>
 <span class="hljs-keyword">for</span> ((i = <span class="hljs-number">1</span>; i &lt;= <span class="hljs-variable">$nbLines</span>+<span class="hljs-number">1</span>; i++)); <span class="hljs-keyword">do</span>
-    <span class="hljs-comment"># Stocke la ligne numéro i dans une variable</span>
+    <span class="hljs-comment"># Stocke la ligne numéro i dans une variable (le tr -d &quot; &quot; permet de supprimer les espaces)</span>
     Lines=$(sed -n <span class="hljs-string">&quot;<span class="hljs-variable">${i}</span>p&quot;</span> <span class="hljs-string">&quot;<span class="hljs-variable">$1</span>&quot;</span> | <span class="hljs-built_in">tr</span> -d <span class="hljs-string">&quot; &quot;</span>)
     <span class="hljs-comment"># Le &lt;&lt;&lt; permet d&#x27;envoyer une chaîne de caractères sans utiliser un echo avec un pipe</span>
     user=$(<span class="hljs-built_in">cut</span> -d <span class="hljs-string">&#x27;,&#x27;</span> -f1 &lt;&lt;&lt; <span class="hljs-string">&quot;<span class="hljs-variable">$Lines</span>&quot;</span>)
@@ -731,15 +726,15 @@ nbLines=$(<span class="hljs-built_in">wc</span> -l &lt; <span class="hljs-string
 	<pre class="hljs"><code><div>u1, g1, /home, /etc/skel/
 u2, g1, /home, /etc/skel/
 </div></code></pre>
-	<p><em>Note :</em> Remplir le contenu de config.txt avec les utilisateurs que vous voulez créer.</p>
+	<p><em>Note :</em> Remplir le contenu de config.txt avec les utilisateurs que vous voulez créer (ne pas utiliser de
+		chemin contenant des espaces).</p>
 	<img src="Screen/testScript.png" style="border-radius: 7px; display: block; margin: 0 auto;">
 	<h2 id="7-terminer">7. Terminer</h2>
 	<p>Le système est désormais configuré :</p>
 	<ul>
 		<li>Un utilisateur <code>testuser</code>.</li>
 		<li>Plusieurs logiciels installés et configurés (<code>emacs</code>, <code>apache2</code>,
-			<code>wireshark</code>, <code>javac</code> et <code>java</code>).
-		</li>
+			<code>wireshark</code>, <code>javac</code> et <code>java</code>).</li>
 		<li>Un Script <code>addUser</code> qui permet de créer des utilisateurs.</li>
 		<li>Un serveur web hébergeant cette notice.</li>
 		<li>Un système de surveillance et de rotation des logs de <code>addUser</code>.</li>
