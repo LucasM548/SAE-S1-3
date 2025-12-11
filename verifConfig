@@ -25,7 +25,9 @@ fi
 
 # --- 2. Vérification des Logiciels ---
 echo "--- Vérification des paquets ---"
+# Pour p egal emac, apache2, wireshark puis git
 for p in "emacs" "apache2" "wireshark" "git"; do
+    # liste les paquets installés commencant par ii <nom du logiciel>, 'ii' siginifie que le logiciel est installé et fonctionnel
     if dpkg -l | grep -q "^ii  $p"; then
         echo -e "\033[32m===== Le logiciel '$p' est installé =====\033[0m"
     else
@@ -33,6 +35,7 @@ for p in "emacs" "apache2" "wireshark" "git"; do
     fi
 done
 
+# vérifie si la commande existe sans l'exécuter
 if command -v java > /dev/null 2>&1 && command -v javac > /dev/null 2>&1; then
     echo -e "\033[32m===== Java et Javac sont installés =====\033[0m"
 else
@@ -49,6 +52,7 @@ fi
 # --- 3. Vérification Dossier /SAE et Permissions ---
 if [ -d "/SAE" ]; then
     # vérifie si les permission de /SAE sont bien 755
+    # stat permet de détailler les informations du fichier, le %a est un code qui correspond au droits d'accès en octal
     if [ "$(stat -c "%a" /SAE)" == "755" ]; then
         echo -e "\033[32m===== Le dossier /SAE existe avec les permissions 755 =====\033[0m"
     else
@@ -66,6 +70,7 @@ else
 fi
 
 # --- 5. Configuration Apache ---
+# Demande au system si apache2 est activé sans afficher de mot a l'écran
 if systemctl is-active --quiet apache2; then
     echo -e "\033[32m===== Le service Apache2 est actif =====\033[0m"
 else
@@ -90,6 +95,7 @@ fi
 # Service Path
 if [ -f "/etc/systemd/system/install-log.path" ]; then
      echo -e "\033[32m===== Le fichier systemd 'install-log.path' est bien placé =====\033[0m"
+     # Demande au system si install-log.path est activé sans afficher de mot a l'écran
      if systemctl is-active --quiet install-log.path; then
         echo -e "\033[32m===== Le service de surveillance 'install-log.path' est actif =====\033[0m"
      else
