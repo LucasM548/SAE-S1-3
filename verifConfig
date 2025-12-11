@@ -87,7 +87,7 @@ fi
 # --- 6. Logs et Services Systemd Custom ---
 # Fichiers de log
 if [ -f "/var/log/date_install.log" ]; then
-    echo -e "\033[32m===== Les fichiers date_install.log existe =====\033[0m"
+    echo -e "\033[32m===== Le fichier date_install.log existe =====\033[0m"
 else
     echo -e "\033[31m===== ERREUR : Le fichier date_install.log manque =====\033[0m"
 fi
