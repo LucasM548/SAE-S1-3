@@ -45,7 +45,7 @@ for ((i = 1; i <= $nbLines+1; i++)); do
         # le -f permet de ne rien faire si le groupe existe déjà
         groupadd -f "$group"
         echo "Le groupe $group a été créé" >> $log
-        # le > /dev/null 2>&1 sert à rediriger le message d'erreur "le répertoire personnel /home existe déjà." (il se produit car l'utilisateur aura défini /home comme home pour l'utilisateur)
+        # le > /dev/null 2>&1 sert à rediriger les potentiels message d'erreur
         useradd -m -k "$repskel" -d "$rephome/$user" -g "$group" "$user" >> $log 2>&1
         if [ $? = 0 ]; then
             # \033[32m avec le -e permet de mettre le texte en vert
