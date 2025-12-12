@@ -502,14 +502,14 @@
 			les modifier.</li>
 	</ul>
 	<p>Ajouter le chemin <code>/SAE/Scripts</code> au <code>PATH</code> de l'utilisateur <code>testuser</code> en
-		modifiant son fichier <code>.bashrc</code> pour qu'il ait accsès aux scripts poubelle depuis n'importe quel
+		modifiant son fichier <code>.bashrc</code> pour qu'il ait accès aux scripts poubelle depuis n'importe quel
 		répertoire :</p>
 	<pre class="hljs"><code><div><span class="hljs-built_in">echo</span> <span class="hljs-string">&#x27;export PATH=$PATH:/SAE/Scripts&#x27;</span> | <span class="hljs-built_in">sudo</span> <span class="hljs-built_in">tee</span> -a <span class="hljs-string">&quot;/home/testuser/.bashrc&quot;</span>
 </div></code></pre>
 	<p><em>Justification :</em> L'utilisation de <code>sudo tee -a</code> permet d'ajouter la ligne au fichier
 		<code>.bashrc</code> avec les droits administrateur, évitant ainsi les problèmes de permissions, le
 		<code>-a</code> signifie <code>append</code> et permet d'ajouter le contenu au fichier sans le remplacer.</p>
-	<p><em>Note :</em> Vous pouvezsimplement utiliser la commande
+	<p><em>Note :</em> Vous pouvez simplement utiliser la commande
 		<code>echo 'export PATH=$PATH:/SAE/Scripts' &gt;&gt; /home/testuser/.bashrc</code>, mais uniquement si
 		l'utilisateur est <code>root</code>, avec la commande <code>sudo -u</code>.</p>
 	<hr>
@@ -680,48 +680,56 @@ nbLines=$(<span class="hljs-built_in">wc</span> -l &lt; <span class="hljs-string
     group=$(<span class="hljs-built_in">cut</span> -d <span class="hljs-string">&#x27;,&#x27;</span> -f2 &lt;&lt;&lt; <span class="hljs-string">&quot;<span class="hljs-variable">$Lines</span>&quot;</span>)
     rephome=$(<span class="hljs-built_in">cut</span> -d <span class="hljs-string">&#x27;,&#x27;</span> -f3 &lt;&lt;&lt; <span class="hljs-string">&quot;<span class="hljs-variable">$Lines</span>&quot;</span>)
     repskel=$(<span class="hljs-built_in">cut</span> -d <span class="hljs-string">&#x27;,&#x27;</span> -f4 &lt;&lt;&lt; <span class="hljs-string">&quot;<span class="hljs-variable">$Lines</span>&quot;</span>)
-    <span class="hljs-keyword">if</span> [ $(awk -F<span class="hljs-string">&#x27;,&#x27;</span> <span class="hljs-string">&#x27;{print NF}&#x27;</span> &lt;&lt;&lt; <span class="hljs-variable">$Lines</span>) = 4 ] &amp;&amp; [ -d <span class="hljs-string">&quot;<span class="hljs-variable">$repskel</span>&quot;</span> ]&amp;&amp; [ -d <span class="hljs-string">&quot;<span class="hljs-variable">$rephome</span>&quot;</span> ]; <span class="hljs-keyword">then</span>
-        <span class="hljs-comment"># le -f permet de ne rien faire si le groupe existe déjà</span>
-        groupadd -f <span class="hljs-string">&quot;<span class="hljs-variable">$group</span>&quot;</span>
-        <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;Le groupe <span class="hljs-variable">$group</span> a été créé&quot;</span> &gt;&gt; <span class="hljs-variable">$log</span>
-        <span class="hljs-comment"># le &gt; /dev/null 2&gt;&amp;1 sert à rediriger les potentiels message d&#x27;erreur</span>
-        useradd -m -k <span class="hljs-string">&quot;<span class="hljs-variable">$repskel</span>&quot;</span> -d <span class="hljs-string">&quot;<span class="hljs-variable">$rephome</span>/<span class="hljs-variable">$user</span>&quot;</span> -g <span class="hljs-string">&quot;<span class="hljs-variable">$group</span>&quot;</span> <span class="hljs-string">&quot;<span class="hljs-variable">$user</span>&quot;</span> &gt;&gt; <span class="hljs-variable">$log</span> 2&gt;&amp;1
-        <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;L&#x27;utilisateur <span class="hljs-variable">$user</span> a été créé avec le répertoire <span class="hljs-variable">$rephome</span>/<span class="hljs-variable">$user</span> et le squelette <span class="hljs-variable">$repskel</span>&quot;</span> &gt;&gt; <span class="hljs-variable">$log</span>
-        <span class="hljs-keyword">if</span> [ $? = 0 ]; <span class="hljs-keyword">then</span>
-            <span class="hljs-comment"># \033[32m avec le -e permet de mettre le texte en vert</span>
-            <span class="hljs-comment"># et \033[0m permet de remettre la couleur blanche (sinon toutes les prochaines lignes seront en vert)</span>
-            <span class="hljs-built_in">echo</span> -e <span class="hljs-string">&quot;\033[32m====== L&#x27;utilisateur <span class="hljs-variable">$user</span> a bien été créé dans le groupe <span class="hljs-variable">$group</span> ======\033[0m&quot;</span>
-            <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;====== L&#x27;utilisateur <span class="hljs-variable">$user</span> a bien été créé dans le groupe <span class="hljs-variable">$group</span> ======&quot;</span> &gt;&gt; <span class="hljs-variable">$log</span>
-            <span class="hljs-comment"># mkdir -p pour créer les fichiers Downloads et Documents s&#x27;ils ne sont pas encore créés</span>
-            <span class="hljs-built_in">mkdir</span> -p <span class="hljs-string">&quot;<span class="hljs-variable">$rephome</span>/<span class="hljs-variable">$user</span>/Downloads&quot;</span> <span class="hljs-string">&quot;<span class="hljs-variable">$rephome</span>/<span class="hljs-variable">$user</span>/Documents&quot;</span>
-            <span class="hljs-keyword">if</span> [ ! -f <span class="hljs-string">&quot;<span class="hljs-variable">$rephome</span>/<span class="hljs-variable">$user</span>/.bashrc&quot;</span> ]; <span class="hljs-keyword">then</span>
-                <span class="hljs-built_in">touch</span> <span class="hljs-string">&quot;<span class="hljs-variable">$rephome</span>/<span class="hljs-variable">$user</span>/.bashrc&quot;</span>
-                <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;Le fichier .bashrc a été créé&quot;</span> &gt;&gt; <span class="hljs-variable">$log</span>
-            <span class="hljs-keyword">fi</span>
 
-            <span class="hljs-built_in">echo</span> -e <span class="hljs-string">&quot;alias e=&#x27;emacs&#x27;\nalias w=&#x27;wireshark&#x27;&quot;</span> &gt;&gt; <span class="hljs-variable">$rephome</span>/<span class="hljs-variable">$user</span>/.bashrc
-            <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;Les alias e pour &#x27;emacs&#x27; et w pour &#x27;wireshark&#x27; ont été ajoutés pour l&#x27;utilisateur <span class="hljs-variable">$user</span>&quot;</span> &gt;&gt; <span class="hljs-variable">$log</span>
-
-            <span class="hljs-comment"># Ajouter le path /Scripts à la suite des paths déjà présents dans le fichier .bashrc</span>
-            <span class="hljs-built_in">echo</span> -e <span class="hljs-string">&#x27;export PATH=&quot;$PATH:/SAE/Scripts&quot;&#x27;</span> &gt;&gt; <span class="hljs-variable">$rephome</span>/<span class="hljs-variable">$user</span>/.bashrc
-            <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;Le path &#x27;/SAE/Scripts&#x27; a bien été ajouté au .bashrc de l&#x27;utilisateur <span class="hljs-variable">$user</span>&quot;</span> &gt;&gt; <span class="hljs-variable">$log</span>
-
-            <span class="hljs-comment"># Rendre les dossiers à l&#x27;utilisateur (sinon ils sont à root)</span>
-            <span class="hljs-built_in">chown</span> -R <span class="hljs-string">&quot;<span class="hljs-variable">$user</span>:<span class="hljs-variable">$group</span>&quot;</span> <span class="hljs-string">&quot;<span class="hljs-variable">$rephome</span>/<span class="hljs-variable">$user</span>&quot;</span>
-            <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;Les droits du dossier <span class="hljs-variable">$rephome</span>/<span class="hljs-variable">$user</span> ont bien été donnés à <span class="hljs-variable">$user</span> du groupe <span class="hljs-variable">$group</span>&quot;</span> &gt;&gt; <span class="hljs-variable">$log</span>
-
-            <span class="hljs-comment"># AJouter l&#x27;utilisateur dans le groupe wireshark pour qu&#x27;il puisse l&#x27;utiliser</span>
-            adduser <span class="hljs-variable">$user</span> wireshark &gt;&gt; <span class="hljs-variable">$log</span> 2&gt;&amp;1
-            <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;L&#x27;utilisateur <span class="hljs-variable">$user</span> a été ajouté au groupe wireshark&quot;</span> &gt;&gt; <span class="hljs-variable">$log</span>
-        <span class="hljs-keyword">else</span>
-            <span class="hljs-built_in">echo</span> -e <span class="hljs-string">&quot;\033[31m====== Erreur : L&#x27;utilisateur <span class="hljs-variable">$user</span> n&#x27;a pas pu être ajouté (il existe peut-être déjà) ======\033[0m&quot;</span>
-            <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;====== Erreur : L&#x27;utilisateur <span class="hljs-variable">$user</span> n&#x27;a pas pu être ajouté (il existe peut-être déjà) ======&quot;</span> &gt;&gt; <span class="hljs-variable">$log</span>
-        <span class="hljs-keyword">fi</span>
+    <span class="hljs-comment"># le -z permet de vérifier si la variable est vide</span>
+    <span class="hljs-comment"># (- z pour Zero, elle vérifie si la chaîne est de longueur nulle)</span>
+    <span class="hljs-keyword">if</span> [ -z <span class="hljs-string">&quot;<span class="hljs-variable">$Lines</span>&quot;</span> ]; <span class="hljs-keyword">then</span>
+        <span class="hljs-comment"># Si la ligne est vide, on passe à la suivante (si la fin à un saut de ligne ou non, ça fonctionneras)</span>
+        <span class="hljs-built_in">continue</span>
     <span class="hljs-keyword">else</span>
-        <span class="hljs-built_in">echo</span> -e <span class="hljs-string">&quot;\033[31m====== Erreur : La ligne <span class="hljs-variable">$i</span> est défaillante ======\033[0m&quot;</span>
-        <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;====== Erreur : La ligne <span class="hljs-variable">$i</span> est défaillante ======&quot;</span> &gt;&gt; <span class="hljs-variable">$log</span>
+        <span class="hljs-keyword">if</span> [ $(awk -F<span class="hljs-string">&#x27;,&#x27;</span> <span class="hljs-string">&#x27;{print NF}&#x27;</span> &lt;&lt;&lt; <span class="hljs-variable">$Lines</span>) = 4 ] &amp;&amp; [ -d <span class="hljs-string">&quot;<span class="hljs-variable">$repskel</span>&quot;</span> ]&amp;&amp; [ -d <span class="hljs-string">&quot;<span class="hljs-variable">$rephome</span>&quot;</span> ]; <span class="hljs-keyword">then</span>
+            <span class="hljs-comment"># le -f permet de ne rien faire si le groupe existe déjà</span>
+            groupadd -f <span class="hljs-string">&quot;<span class="hljs-variable">$group</span>&quot;</span>
+            <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;Le groupe <span class="hljs-variable">$group</span> a été créé&quot;</span> &gt;&gt; <span class="hljs-variable">$log</span>
+            <span class="hljs-comment"># le &gt; /dev/null 2&gt;&amp;1 sert à rediriger les potentiels message d&#x27;erreur</span>
+            useradd -m -k <span class="hljs-string">&quot;<span class="hljs-variable">$repskel</span>&quot;</span> -d <span class="hljs-string">&quot;<span class="hljs-variable">$rephome</span>/<span class="hljs-variable">$user</span>&quot;</span> -g <span class="hljs-string">&quot;<span class="hljs-variable">$group</span>&quot;</span> <span class="hljs-string">&quot;<span class="hljs-variable">$user</span>&quot;</span> &gt;&gt; <span class="hljs-variable">$log</span> 2&gt;&amp;1
+            <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;L&#x27;utilisateur <span class="hljs-variable">$user</span> a été créé avec le répertoire <span class="hljs-variable">$rephome</span>/<span class="hljs-variable">$user</span> et le squelette <span class="hljs-variable">$repskel</span>&quot;</span> &gt;&gt; <span class="hljs-variable">$log</span>
+            <span class="hljs-keyword">if</span> [ $? = 0 ]; <span class="hljs-keyword">then</span>
+                <span class="hljs-comment"># \033[32m avec le -e permet de mettre le texte en vert</span>
+                <span class="hljs-comment"># et \033[0m permet de remettre la couleur blanche (sinon toutes les prochaines lignes seront en vert)</span>
+                <span class="hljs-built_in">echo</span> -e <span class="hljs-string">&quot;\033[32m====== L&#x27;utilisateur <span class="hljs-variable">$user</span> a bien été créé dans le groupe <span class="hljs-variable">$group</span> ======\033[0m&quot;</span>
+                <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;====== L&#x27;utilisateur <span class="hljs-variable">$user</span> a bien été créé dans le groupe <span class="hljs-variable">$group</span> ======&quot;</span> &gt;&gt; <span class="hljs-variable">$log</span>
+                <span class="hljs-comment"># mkdir -p pour créer les fichiers Downloads et Documents s&#x27;ils ne sont pas encore créés</span>
+                <span class="hljs-built_in">mkdir</span> -p <span class="hljs-string">&quot;<span class="hljs-variable">$rephome</span>/<span class="hljs-variable">$user</span>/Downloads&quot;</span> <span class="hljs-string">&quot;<span class="hljs-variable">$rephome</span>/<span class="hljs-variable">$user</span>/Documents&quot;</span>
+                <span class="hljs-keyword">if</span> [ ! -f <span class="hljs-string">&quot;<span class="hljs-variable">$rephome</span>/<span class="hljs-variable">$user</span>/.bashrc&quot;</span> ]; <span class="hljs-keyword">then</span>
+                    <span class="hljs-built_in">touch</span> <span class="hljs-string">&quot;<span class="hljs-variable">$rephome</span>/<span class="hljs-variable">$user</span>/.bashrc&quot;</span>
+                    <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;Le fichier .bashrc a été créé&quot;</span> &gt;&gt; <span class="hljs-variable">$log</span>
+                <span class="hljs-keyword">fi</span>
+
+                <span class="hljs-built_in">echo</span> -e <span class="hljs-string">&quot;alias e=&#x27;emacs&#x27;\nalias w=&#x27;wireshark&#x27;&quot;</span> &gt;&gt; <span class="hljs-variable">$rephome</span>/<span class="hljs-variable">$user</span>/.bashrc
+                <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;Les alias e pour &#x27;emacs&#x27; et w pour &#x27;wireshark&#x27; ont été ajoutés pour l&#x27;utilisateur <span class="hljs-variable">$user</span>&quot;</span> &gt;&gt; <span class="hljs-variable">$log</span>
+
+                <span class="hljs-comment"># Ajouter le path /Scripts à la suite des paths déjà présents dans le fichier .bashrc</span>
+                <span class="hljs-built_in">echo</span> -e <span class="hljs-string">&#x27;export PATH=&quot;$PATH:/SAE/Scripts&quot;&#x27;</span> &gt;&gt; <span class="hljs-variable">$rephome</span>/<span class="hljs-variable">$user</span>/.bashrc
+                <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;Le path &#x27;/SAE/Scripts&#x27; a bien été ajouté au .bashrc de l&#x27;utilisateur <span class="hljs-variable">$user</span>&quot;</span> &gt;&gt; <span class="hljs-variable">$log</span>
+
+                <span class="hljs-comment"># Rendre les dossiers à l&#x27;utilisateur (sinon ils sont à root)</span>
+                <span class="hljs-built_in">chown</span> -R <span class="hljs-string">&quot;<span class="hljs-variable">$user</span>:<span class="hljs-variable">$group</span>&quot;</span> <span class="hljs-string">&quot;<span class="hljs-variable">$rephome</span>/<span class="hljs-variable">$user</span>&quot;</span>
+                <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;Les droits du dossier <span class="hljs-variable">$rephome</span>/<span class="hljs-variable">$user</span> ont bien été donnés à <span class="hljs-variable">$user</span> du groupe <span class="hljs-variable">$group</span>&quot;</span> &gt;&gt; <span class="hljs-variable">$log</span>
+
+                <span class="hljs-comment"># AJouter l&#x27;utilisateur dans le groupe wireshark pour qu&#x27;il puisse l&#x27;utiliser</span>
+                adduser <span class="hljs-variable">$user</span> wireshark &gt;&gt; <span class="hljs-variable">$log</span> 2&gt;&amp;1
+                <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;L&#x27;utilisateur <span class="hljs-variable">$user</span> a été ajouté au groupe wireshark&quot;</span> &gt;&gt; <span class="hljs-variable">$log</span>
+            <span class="hljs-keyword">else</span>
+                <span class="hljs-built_in">echo</span> -e <span class="hljs-string">&quot;\033[31m====== Erreur : L&#x27;utilisateur <span class="hljs-variable">$user</span> n&#x27;a pas pu être ajouté (il existe peut-être déjà) ======\033[0m&quot;</span>
+                <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;====== Erreur : L&#x27;utilisateur <span class="hljs-variable">$user</span> n&#x27;a pas pu être ajouté (il existe peut-être déjà) ======&quot;</span> &gt;&gt; <span class="hljs-variable">$log</span>
+            <span class="hljs-keyword">fi</span>
+        <span class="hljs-keyword">else</span>
+            <span class="hljs-built_in">echo</span> -e <span class="hljs-string">&quot;\033[31m====== Erreur : La ligne <span class="hljs-variable">$i</span> est défaillante ======\033[0m&quot;</span>
+            <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;====== Erreur : La ligne <span class="hljs-variable">$i</span> est défaillante ======&quot;</span> &gt;&gt; <span class="hljs-variable">$log</span>
+        <span class="hljs-keyword">fi</span>
+        <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;================================================&quot;</span> &gt;&gt; <span class="hljs-variable">$log</span>
     <span class="hljs-keyword">fi</span>
-    <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;================================================&quot;</span> &gt;&gt; <span class="hljs-variable">$log</span>
 <span class="hljs-keyword">done</span>
 </div></code></pre>
 	<h3 id="ex%C3%A9cution">Exécution</h3>

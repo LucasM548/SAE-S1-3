@@ -41,46 +41,54 @@ for ((i = 1; i <= $nbLines+1; i++)); do
     group=$(cut -d ',' -f2 <<< "$Lines")
     rephome=$(cut -d ',' -f3 <<< "$Lines")
     repskel=$(cut -d ',' -f4 <<< "$Lines")
-    if [ $(awk -F',' '{print NF}' <<< $Lines) = 4 ] && [ -d "$repskel" ]&& [ -d "$rephome" ]; then
-        # le -f permet de ne rien faire si le groupe existe déjà
-        groupadd -f "$group"
-        echo "Le groupe $group a été créé" >> $log
-        # le > /dev/null 2>&1 sert à rediriger les potentiels message d'erreur
-        useradd -m -k "$repskel" -d "$rephome/$user" -g "$group" "$user" >> $log 2>&1
-        echo "L'utilisateur $user a été créé avec le répertoire $rephome/$user et le squelette $repskel" >> $log
-        if [ $? = 0 ]; then
-            # \033[32m avec le -e permet de mettre le texte en vert
-            # et \033[0m permet de remettre la couleur blanche (sinon toutes les prochaines lignes seront en vert)
-            echo -e "\033[32m====== L'utilisateur $user a bien été créé dans le groupe $group ======\033[0m"
-            echo "====== L'utilisateur $user a bien été créé dans le groupe $group ======" >> $log
-            # mkdir -p pour créer les fichiers Downloads et Documents s'ils ne sont pas encore créés
-            mkdir -p "$rephome/$user/Downloads" "$rephome/$user/Documents"
-            if [ ! -f "$rephome/$user/.bashrc" ]; then
-                touch "$rephome/$user/.bashrc"
-                echo "Le fichier .bashrc a été créé" >> $log
-            fi
 
-            echo -e "alias e='emacs'\nalias w='wireshark'" >> $rephome/$user/.bashrc
-            echo "Les alias e pour 'emacs' et w pour 'wireshark' ont été ajoutés pour l'utilisateur $user" >> $log
-
-            # Ajouter le path /Scripts à la suite des paths déjà présents dans le fichier .bashrc
-            echo -e 'export PATH="$PATH:/SAE/Scripts"' >> $rephome/$user/.bashrc
-            echo "Le path '/SAE/Scripts' a bien été ajouté au .bashrc de l'utilisateur $user" >> $log
-
-            # Rendre les dossiers à l'utilisateur (sinon ils sont à root)
-            chown -R "$user:$group" "$rephome/$user"
-            echo "Les droits du dossier $rephome/$user ont bien été donnés à $user du groupe $group" >> $log
-
-            # AJouter l'utilisateur dans le groupe wireshark pour qu'il puisse l'utiliser
-            adduser $user wireshark >> $log 2>&1
-            echo "L'utilisateur $user a été ajouté au groupe wireshark" >> $log
-        else
-            echo -e "\033[31m====== Erreur : L'utilisateur $user n'a pas pu être ajouté (il existe peut-être déjà) ======\033[0m"
-            echo "====== Erreur : L'utilisateur $user n'a pas pu être ajouté (il existe peut-être déjà) ======" >> $log
-        fi
+    # le -z permet de vérifier si la variable est vide
+    # (- z pour Zero, elle vérifie si la chaîne est de longueur nulle)
+    if [ -z "$Lines" ]; then
+        # Si la ligne est vide, on passe à la suivante (si la fin à un saut de ligne ou non, ça fonctionneras)
+        continue
     else
-        echo -e "\033[31m====== Erreur : La ligne $i est défaillante ======\033[0m"
-        echo "====== Erreur : La ligne $i est défaillante ======" >> $log
+        if [ $(awk -F',' '{print NF}' <<< $Lines) = 4 ] && [ -d "$repskel" ]&& [ -d "$rephome" ]; then
+            # le -f permet de ne rien faire si le groupe existe déjà
+            groupadd -f "$group"
+            echo "Le groupe $group a été créé" >> $log
+            # le > /dev/null 2>&1 sert à rediriger les potentiels message d'erreur
+            useradd -m -k "$repskel" -d "$rephome/$user" -g "$group" "$user" >> $log 2>&1
+            echo "L'utilisateur $user a été créé avec le répertoire $rephome/$user et le squelette $repskel" >> $log
+            if [ $? = 0 ]; then
+                # \033[32m avec le -e permet de mettre le texte en vert
+                # et \033[0m permet de remettre la couleur blanche (sinon toutes les prochaines lignes seront en vert)
+                echo -e "\033[32m====== L'utilisateur $user a bien été créé dans le groupe $group ======\033[0m"
+                echo "====== L'utilisateur $user a bien été créé dans le groupe $group ======" >> $log
+                # mkdir -p pour créer les fichiers Downloads et Documents s'ils ne sont pas encore créés
+                mkdir -p "$rephome/$user/Downloads" "$rephome/$user/Documents"
+                if [ ! -f "$rephome/$user/.bashrc" ]; then
+                    touch "$rephome/$user/.bashrc"
+                    echo "Le fichier .bashrc a été créé" >> $log
+                fi
+
+                echo -e "alias e='emacs'\nalias w='wireshark'" >> $rephome/$user/.bashrc
+                echo "Les alias e pour 'emacs' et w pour 'wireshark' ont été ajoutés pour l'utilisateur $user" >> $log
+
+                # Ajouter le path /Scripts à la suite des paths déjà présents dans le fichier .bashrc
+                echo -e 'export PATH="$PATH:/SAE/Scripts"' >> $rephome/$user/.bashrc
+                echo "Le path '/SAE/Scripts' a bien été ajouté au .bashrc de l'utilisateur $user" >> $log
+
+                # Rendre les dossiers à l'utilisateur (sinon ils sont à root)
+                chown -R "$user:$group" "$rephome/$user"
+                echo "Les droits du dossier $rephome/$user ont bien été donnés à $user du groupe $group" >> $log
+
+                # AJouter l'utilisateur dans le groupe wireshark pour qu'il puisse l'utiliser
+                adduser $user wireshark >> $log 2>&1
+                echo "L'utilisateur $user a été ajouté au groupe wireshark" >> $log
+            else
+                echo -e "\033[31m====== Erreur : L'utilisateur $user n'a pas pu être ajouté (il existe peut-être déjà) ======\033[0m"
+                echo "====== Erreur : L'utilisateur $user n'a pas pu être ajouté (il existe peut-être déjà) ======" >> $log
+            fi
+        else
+            echo -e "\033[31m====== Erreur : La ligne $i est défaillante ======\033[0m"
+            echo "====== Erreur : La ligne $i est défaillante ======" >> $log
+        fi
+        echo "================================================" >> $log
     fi
-    echo "================================================" >> $log
 done
