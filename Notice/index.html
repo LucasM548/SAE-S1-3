@@ -577,7 +577,7 @@ Description=Ajoute la date dans date_install.log
 [Service]
 # Indique que ce service exécute la commande et s&#x27;arrête juste après
 Type=oneshot
-# Lorsque que le service est appelé, ajoute la date actuelle dans le fichier date_install.log (on utilise pas uniquement bash car systemd n&#x27;a pas le path)
+# Lorsque que le service est appelé, ajoute la date actuelle dans le fichier date_install.log (on n&#x27;utilise pas uniquement bash car systemd n&#x27;a pas le path)
 ExecStart=/bin/bash -c &#x27;date &gt;&gt; /var/log/date_install.log&#x27;
 </div></code></pre>
 	<p>Pour éviter que les fichiers de logs ne saturent l'espace disque, Il faut configurer <code>logrotate</code>.</p>
@@ -696,7 +696,12 @@ nbLines=$(<span class="hljs-built_in">wc</span> -l &lt; <span class="hljs-string
             groupadd -f <span class="hljs-string">&quot;<span class="hljs-variable">$group</span>&quot;</span>
             <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;Le groupe <span class="hljs-variable">$group</span> a été créé&quot;</span> &gt;&gt; <span class="hljs-variable">$log</span>
             <span class="hljs-comment"># le &gt; /dev/null 2&gt;&amp;1 sert à rediriger les potentiels message d&#x27;erreur</span>
-            useradd -m -k <span class="hljs-string">&quot;<span class="hljs-variable">$repskel</span>&quot;</span> -d <span class="hljs-string">&quot;<span class="hljs-variable">$rephome</span>/<span class="hljs-variable">$user</span>&quot;</span> -g <span class="hljs-string">&quot;<span class="hljs-variable">$group</span>&quot;</span> <span class="hljs-string">&quot;<span class="hljs-variable">$user</span>&quot;</span> &gt;&gt; <span class="hljs-variable">$log</span> 2&gt;&amp;1
+            useradd -m -s <span class="hljs-string">&quot;/bin/bash&quot;</span> -k <span class="hljs-string">&quot;<span class="hljs-variable">$repskel</span>&quot;</span> -d <span class="hljs-string">&quot;<span class="hljs-variable">$rephome</span>/<span class="hljs-variable">$user</span>&quot;</span> -g <span class="hljs-string">&quot;<span class="hljs-variable">$group</span>&quot;</span> <span class="hljs-string">&quot;<span class="hljs-variable">$user</span>&quot;</span> &gt;&gt; <span class="hljs-variable">$log</span> 2&gt;&amp;1
+            <span class="hljs-comment"># -m : créer les répertoires s&#x27;il n&#x27;existe pas</span>
+            <span class="hljs-comment"># -s : shell de l&#x27;utilisateur</span>
+            <span class="hljs-comment"># -k : répertoire squelette</span>
+            <span class="hljs-comment"># -d : répertoire home</span>
+            <span class="hljs-comment"># -g : groupe principal</span>
             <span class="hljs-keyword">if</span> [ $? = 0 ]; <span class="hljs-keyword">then</span>
                 <span class="hljs-comment"># \033[32m avec le -e permet de mettre le texte en vert</span>
                 <span class="hljs-comment"># et \033[0m permet de remettre la couleur blanche (sinon toutes les prochaines lignes seront en vert)</span>
